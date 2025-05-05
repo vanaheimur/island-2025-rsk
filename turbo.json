@@ -40,9 +40,6 @@
   "globalEnv": [
     "PORT",
     "DATABASE_URL",
-    "NODE_ENV",
-    "SHOW_ADMIN_PLAYGROUND",
-    "AUTO_SCHEMA_FILE",
-    "GENERATE_SCHEMA_FILES"
+    "NODE_ENV"
   ]
 }

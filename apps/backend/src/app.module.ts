@@ -1,12 +1,8 @@
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { TaxReturnsModule } from './taxReturns/taxReturns.module'
 
-import { Module } from '@nestjs/common';
-import { DrizzleConnectionModule } from '@vanir/drizzle-connection';
+import { Module } from '@nestjs/common'
 
 @Module({
-  imports: [DrizzleConnectionModule],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [TaxReturnsModule],
 })
 export class AppModule {}

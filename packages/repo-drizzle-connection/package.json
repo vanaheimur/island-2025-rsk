@@ -1,5 +1,5 @@
 {
-  "name": "@vanir/drizzle-connection",
+  "name": "@repo/drizzle-connection",
   "dependencies": {
     "@nestjs/common": "11.0.11",
     "@nestjs/config": "4.0.1",
