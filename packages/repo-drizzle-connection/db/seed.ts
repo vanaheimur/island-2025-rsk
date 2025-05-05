@@ -12,14 +12,13 @@ async function main() {
   await reset(db, schema)
 
   await seed(db, schema).refine((f) => ({
-    potatoes: {
+    taxReturn: {
       columns: {
-        age: f.int({ minValue: 1, maxValue: 99 }),
-        color: f.valuesFromArray({ values: ['red', 'yellow', 'purple'] }),
+        year: f.year(),
       },
     },
   }))
 
-  logger.info('New potatoes created!')
+  logger.info('New data created!')
 }
 main()

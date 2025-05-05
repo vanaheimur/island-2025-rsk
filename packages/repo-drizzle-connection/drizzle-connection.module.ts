@@ -1,5 +1,6 @@
 import config, { DrizzleConnectionConfig } from './config'
 import { DRIZZLE_CLIENT } from './constants'
+import * as schema from './db/schema'
 
 import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
@@ -23,7 +24,7 @@ import { Pool } from 'pg'
           connectionString,
         })
 
-        return drizzle({ client: pool })
+        return drizzle({ client: pool, schema })
       },
       inject: [ConfigService],
     },

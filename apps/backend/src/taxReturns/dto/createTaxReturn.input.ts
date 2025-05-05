@@ -2,9 +2,7 @@ import { type TaxReturnStatus, taxReturnStatuses } from '../types'
 
 import { ApiProperty } from '@nestjs/swagger'
 
-export class TaxReturnInput {
+export class CreateTaxReturnInput {
   @ApiProperty({ enum: taxReturnStatuses })
   status!: TaxReturnStatus
-  createdAt!: Date
-  updatedAt!: Date
 }
