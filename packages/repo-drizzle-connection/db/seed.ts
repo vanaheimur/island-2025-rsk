@@ -74,7 +74,7 @@ async function main() {
     user: {
       columns: {
         name: f.fullName(), // TODO: Use icelandic name (nice to have)
-        nationalId: f.valuesFromArray({ values: nationalIds }),
+        nationalId: f.valuesFromArray({ values: nationalIds, isUnique: true }),
         address: f.streetAddress(), // TODO: Use icelandic address (nice to have)
         email: f.email(),
         phone: f.phoneNumber({ template: '5##-####' }),
