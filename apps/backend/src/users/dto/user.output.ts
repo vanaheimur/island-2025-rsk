@@ -1,7 +1,7 @@
 export class UserOutput {
   id!: number
   name!: string
-  kennitala!: string
+  nationalId!: string
   address!: string
   email!: string
   phone!: string

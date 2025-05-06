@@ -1,5 +1,5 @@
 {
-  "id": "d9fad14c-a861-46cd-b039-fe3c08de42f4",
+  "id": "b9591790-bddc-44f6-8065-8f3d8f2e95b4",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -290,9 +290,9 @@
           "primaryKey": false,
           "notNull": true
         },
-        "lenderKennitala": {
-          "name": "lenderKennitala",
-          "type": "varchar(255)",
+        "lenderNationalId": {
+          "name": "lenderNationalId",
+          "type": "varchar(10)",
           "primaryKey": false,
           "notNull": true
         },
@@ -561,8 +561,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "kennitala": {
-          "name": "kennitala",
+        "nationalId": {
+          "name": "nationalId",
           "type": "varchar(10)",
           "primaryKey": false,
           "notNull": true

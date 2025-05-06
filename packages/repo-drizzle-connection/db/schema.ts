@@ -30,7 +30,7 @@ export const taxReturn = pgTable('tax_return', {
 export const user = pgTable('user', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   name: varchar({ length: 255 }).notNull(),
-  kennitala: varchar({ length: 10 }).notNull(),
+  nationalId: varchar({ length: 10 }).notNull(),
   address: varchar({ length: 255 }).notNull(),
   email: varchar({ length: 255 }).notNull(),
   phone: varchar({ length: 20 }).notNull(),
@@ -87,12 +87,12 @@ export const mortgage = pgTable('mortgage', {
   yearOfPurchase: integer().notNull(),
   residentialLocation: varchar({ length: 255 }).notNull(),
   lenderName: varchar({ length: 255 }).notNull(),
-  lenderKennitala: varchar({ length: 255 }).notNull(),
+  lenderNationalId: varchar({ length: 10 }).notNull(),
   loanNumber: varchar({ length: 255 }).notNull(),
   loanDate: timestamp().notNull(),
   loanTermInYears: integer().notNull(),
   totalPaymentsForTheYear: decimal({ scale: 30, mode: 'number' }).notNull(),
-  installmentOfNominalValue: decimal({ scale: 30, mode: 'number' }).notNull(),
+  installmentOfNominalValue: decimal({ scale: 30, mode: 'number' }).notNull(), // Afborgun á nafnverði
   interestExpenses: decimal({ scale: 30, mode: 'number' }).notNull(),
   remainingDebt: decimal({ scale: 30, mode: 'number' }).notNull(),
   createdAt: timestamp().defaultNow(),

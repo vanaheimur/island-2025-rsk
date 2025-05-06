@@ -34,7 +34,7 @@ CREATE TABLE "mortgage" (
 	"yearOfPurchase" integer NOT NULL,
 	"residentialLocation" varchar(255) NOT NULL,
 	"lenderName" varchar(255) NOT NULL,
-	"lenderKennitala" varchar(255) NOT NULL,
+	"lenderNationalId" varchar(10) NOT NULL,
 	"loanNumber" varchar(255) NOT NULL,
 	"loanDate" timestamp NOT NULL,
 	"loanTermInYears" integer NOT NULL,
@@ -68,7 +68,7 @@ CREATE TABLE "tax_return" (
 CREATE TABLE "user" (
 	"id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "user_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START WITH 1 CACHE 1),
 	"name" varchar(255) NOT NULL,
-	"kennitala" varchar(10) NOT NULL,
+	"nationalId" varchar(10) NOT NULL,
 	"address" varchar(255) NOT NULL,
 	"email" varchar(255) NOT NULL,
 	"phone" varchar(20) NOT NULL,

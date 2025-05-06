@@ -3,7 +3,7 @@ export class MortgageOutput {
   yearOfPurchase!: number
   residentialLocation!: string
   lenderName!: string
-  lenderKennitala!: string
+  lenderNationalId!: string
   loanNumber!: string
   loanDate!: Date
   loanTermInYears!: number
