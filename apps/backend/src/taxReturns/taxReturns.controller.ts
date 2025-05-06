@@ -1,11 +1,11 @@
+import { AssetOutput } from './dto/asset.output'
 import { CreateTaxReturnInput } from './dto/createTaxReturn.input'
+import { IncomeOutput } from './dto/income.output'
+import { MortgageOutput } from './dto/mortgage.output'
+import { OtherDebtOutput } from './dto/otherDebt.output'
 import { TaxReturnOutput } from './dto/taxReturn.output'
 import { UpdateTaxReturnInput } from './dto/updateTaxReturn.input'
 import { TaxReturnsService } from './taxReturns.service'
-import { AssetOutput } from '../assets/dto/asset.output'
-import { IncomeOutput } from '../income/dto/income.output'
-import { MortgageOutput } from '../mortgages/dto/mortgage.output'
-import { OtherDebtOutput } from '../otherDebts/dto/otherDebt.output'
 
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common'
 
