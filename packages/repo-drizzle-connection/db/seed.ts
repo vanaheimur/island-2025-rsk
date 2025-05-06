@@ -3,6 +3,7 @@ import 'dotenv/config'
 import * as schema from './schema'
 
 import { logger } from '@repo/logger'
+import { sql } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { reset, seed } from 'drizzle-seed'
 
@@ -10,6 +11,11 @@ const db = drizzle(process.env.DATABASE_URL!)
 async function main() {
   logger.info('Resetting the database!')
   await reset(db, schema)
+
+  // Reset the sequence for the incomeCategory table
+  await db.execute(
+    sql`SELECT setval(pg_get_serial_sequence('"income_category"', 'id'), coalesce(max(id)+1, 1), false) FROM "income_category";`,
+  )
 
   // First insert the fixed incomeCategory entries
   const incomeCategories = await db
