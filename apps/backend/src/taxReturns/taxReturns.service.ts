@@ -16,25 +16,63 @@ export class TaxReturnsService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     @Inject(DRIZZLE_CLIENT) private readonly db: DrizzleClient,
   ) {}
-  public async getMultipleTaxReturns() {
-    this.logger.debug('Fetching all tax returns')
-    // TODO: Add pagination here
-    return this.db.query.taxReturn.findMany()
-  }
+  // public async getMultipleTaxReturns() {
+  //   this.logger.debug('Fetching all tax returns')
+  //   // TODO: Add pagination here
+  //   return this.db.query.taxReturn.findMany()
+  // }
 
-  public async getSingleTaxReturnById(id: number) {
-    this.logger.debug('Fetching a single tax return', { id })
-    const data = await this.db.query.taxReturn.findFirst({
+  public async getSingleTaxReturnByNationalId(nationalId: string) {
+    this.logger.debug('Fetching a single tax return', { nationalId })
+
+    // Later we can try add with to select all with the user in one query
+    const user = await this.db.query.user.findFirst({
       where(fields) {
-        return eq(fields.id, id)
+        return eq(fields.nationalId, nationalId)
       },
     })
 
-    if (!data) {
+    if (!user) {
+      throw new NotFoundException('National ID not found')
+    }
+
+    const taxReturn = await this.db.query.taxReturn.findFirst({
+      where(fields) {
+        return eq(fields.userId, user.id)
+      },
+    })
+
+    if (!taxReturn) {
       throw new NotFoundException('Tax return not found')
     }
 
-    return data
+    // TODO: Sort by incomeCategoryId or group by it
+    const incomes = await this.db.query.income.findMany({
+      where(fields) {
+        return eq(fields.userId, user.id)
+      },
+    })
+
+    // TODO: Filter by isForeign === false
+    const assets = await this.db.query.asset.findMany({
+      where(fields) {
+        return eq(fields.userId, user.id)
+      },
+    })
+
+    const mortgages = await this.db.query.mortgage.findMany({
+      where(fields) {
+        return eq(fields.userId, user.id)
+      },
+    })
+
+    const otherDebts = await this.db.query.otherDebt.findMany({
+      where(fields) {
+        return eq(fields.userId, user.id)
+      },
+    })
+
+    return { ...taxReturn, incomes, assets, mortgages, otherDebts }
   }
 
   public async updateTaxReturn(id: number, input: UpdateTaxReturnInput) {
