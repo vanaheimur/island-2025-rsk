@@ -1,30 +1,30 @@
-import { CreateTaxReturnInput } from './dto/createTaxReturn.input'
-import { UpdateTaxReturnInput } from './dto/updateTaxReturn.input'
+import { CreateIncomeInput } from './dto/createIncome.input'
+import { UpdateIncomeInput } from './dto/updateIncome.input'
 
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import {
   DRIZZLE_CLIENT,
   type DrizzleClient,
   eq,
-  taxReturn,
+  income,
 } from '@repo/drizzle-connection'
 import { type Logger, LOGGER_PROVIDER } from '@repo/logger'
 
 @Injectable()
-export class TaxReturnsService {
+export class IncomesService {
   constructor(
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     @Inject(DRIZZLE_CLIENT) private readonly db: DrizzleClient,
   ) {}
-  public async getMultipleTaxReturns() {
+  public async getMultipleIncomes() {
     this.logger.debug('Fetching all tax returns')
     // TODO: Add pagination here
-    return this.db.query.taxReturn.findMany()
+    return this.db.query.income.findMany()
   }
 
-  public async getSingleTaxReturnById(id: number) {
+  public async getSingleIncomeById(id: number) {
     this.logger.debug('Fetching a single tax return', { id })
-    const data = await this.db.query.taxReturn.findFirst({
+    const data = await this.db.query.income.findFirst({
       where(fields) {
         return eq(fields.id, id)
       },
@@ -37,13 +37,13 @@ export class TaxReturnsService {
     return data
   }
 
-  public async updateTaxReturn(id: number, input: UpdateTaxReturnInput) {
+  public async updateIncome(id: number, input: UpdateIncomeInput) {
     this.logger.debug('Updating a new tax return', { id, input })
 
     const data = await this.db
-      .update(taxReturn)
+      .update(income)
       .set(input)
-      .where(eq(taxReturn.id, id))
+      .where(eq(income.id, id))
       .returning()
 
     if (!data || !data[0]) {
@@ -61,12 +61,12 @@ export class TaxReturnsService {
     return data[0]
   }
 
-  public async createTaxReturn(input: CreateTaxReturnInput) {
+  public async createIncome(input: CreateIncomeInput) {
     this.logger.debug('Creating a new tax return', { input })
 
     const data = await this.db
-      .insert(taxReturn)
-      .values({ ...input, year: new Date().getFullYear() })
+      .insert(income)
+      .values(input)
       .returning()
 
     if (!data || !data[0]) {

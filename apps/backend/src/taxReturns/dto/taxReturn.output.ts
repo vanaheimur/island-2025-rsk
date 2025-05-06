@@ -9,6 +9,7 @@ export class TaxReturnOutput {
   status!: TaxReturnStatus
   createdAt!: Date
   updatedAt!: Date
+  userId!: number
 
   // this allows us to cast data to an instance of this class
   constructor(partial: Partial<TaxReturnOutput>) {

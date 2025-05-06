@@ -38,10 +38,7 @@ export class TaxReturnsController {
     @Param('id') id: number,
     @Body() body: UpdateTaxReturnInput,
   ): Promise<TaxReturnOutput> {
-    const taxReturn = await this.taxReturnsService.updateTaxReturn({
-      ...body,
-      id,
-    })
+    const taxReturn = await this.taxReturnsService.updateTaxReturn(id, body)
 
     return new TaxReturnOutput({
       ...taxReturn,

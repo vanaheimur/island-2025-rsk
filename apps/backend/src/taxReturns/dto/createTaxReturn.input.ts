@@ -5,4 +5,5 @@ import { ApiProperty } from '@nestjs/swagger'
 export class CreateTaxReturnInput {
   @ApiProperty({ enum: taxReturnStatuses })
   status!: TaxReturnStatus
+  userId!: number
 }
