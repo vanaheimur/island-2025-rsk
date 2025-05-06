@@ -2147,27 +2147,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/common@npm:11.0.1":
-  version: 11.0.1
-  resolution: "@nestjs/common@npm:11.0.1"
-  dependencies:
-    iterare: "npm:1.2.1"
-    tslib: "npm:2.8.1"
-    uid: "npm:2.0.2"
-  peerDependencies:
-    class-transformer: "*"
-    class-validator: "*"
-    reflect-metadata: ^0.1.12 || ^0.2.0
-    rxjs: ^7.1.0
-  peerDependenciesMeta:
-    class-transformer:
-      optional: true
-    class-validator:
-      optional: true
-  checksum: 10c0/f7b3b3d6a2e7d6982bdff4572d0e44c8504343c3c17d6db7b493f7c284a9109e353d119ae7205190beedcda6f6027058d26fd260d514df59284377c01571a97c
-  languageName: node
-  linkType: hard
-
 "@nestjs/common@npm:11.0.11":
   version: 11.0.11
   resolution: "@nestjs/common@npm:11.0.11"
@@ -4305,7 +4284,7 @@ __metadata:
     "@apollo/server": "npm:4.12.0"
     "@nestjs/apollo": "npm:13.1.0"
     "@nestjs/cli": "npm:11.0.5"
-    "@nestjs/common": "npm:11.0.1"
+    "@nestjs/common": "npm:11.0.11"
     "@nestjs/core": "npm:11.0.11"
     "@nestjs/platform-express": "npm:11.0.1"
     "@nestjs/schematics": "npm:11.0.0"
