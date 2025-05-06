@@ -11,38 +11,29 @@ async function main() {
   logger.info('Resetting the database!')
   await reset(db, schema)
 
+  // First insert the fixed incomeCategory entries
+  const incomeCategoryPresets = await db
+    .insert(schema.incomeCategory)
+    .values([
+      { name: 'Launatekjur og starfstengdar greiðslur', order: 1 },
+      { name: 'Ökutækjastyrkur', order: 2 },
+      { name: 'Dagpeningar', order: 3 },
+      { name: 'Bifreiðahlunnindi', order: 4 },
+      { name: 'Húsnæðishlunnindi', order: 5 },
+      { name: 'Önnur hlunnindi, hvað', order: 6 },
+    ])
+    .returning()
+    .execute()
+
+  // Then continue with the other seed data
   await seed(db, schema).refine((f) => ({
-    // incomeCategory: {
-    //   columns: {
-    //     name: f.string(),
-    //     // order to start from 1 and increment by 1 for each category
-    //     order: f.int({ minValue: 1, maxValue: 10 }).
-    //   },
-    // },
-    // user: {
-    //   columns: {
-    //     name: f.fullName(),
-    //     kennitala: f.valuesFromArray({
-    //       values: [
-    //         '1811921519',
-    //         '1811931589',
-    //         '1902961489',
-    //         '1906621449',
-    //         '1906651439',
-    //         '1908811569',
-    //         '1908821449',
-    //         '1908821529',
-    //         '1907611429',
-    //         '1907561499',
-    //         '1907801559',
-    //         '1907941569',
-    //       ],
-    //     }),
-    //     address: f.streetAddress(),
-    //     email: f.email(),
-    //     phone: f.phoneNumber(),
-    //   },
-    // },
+    income: {
+      columns: {
+        incomeCategoryId: f.valuesFromArray({
+          values: incomeCategoryPresets.map((preset) => preset.id),
+        }),
+      },
+    },
     taxReturn: {
       columns: {
         year: f.year(),
