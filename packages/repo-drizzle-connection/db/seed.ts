@@ -43,9 +43,7 @@ async function main() {
     '1908821449',
     '1908821529',
     '1907611429',
-    '1907561499',
-    '1907801559',
-    '1907941569',
+    ...(process.env.TEST_NATIONAL_IDS?.split(',') ?? []),
   ]
 
   const lendersNames = [

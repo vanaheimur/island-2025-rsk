@@ -16,11 +16,6 @@ export class TaxReturnsService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     @Inject(DRIZZLE_CLIENT) private readonly db: DrizzleClient,
   ) {}
-  // public async getMultipleTaxReturns() {
-  //   this.logger.debug('Fetching all tax returns')
-  //   // TODO: Add pagination here
-  //   return this.db.query.taxReturn.findMany()
-  // }
 
   public async getSingleTaxReturnByNationalId(nationalId: string) {
     this.logger.debug('Fetching a single tax return', { nationalId })

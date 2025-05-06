@@ -86,6 +86,3 @@ export class TaxReturnsController {
     })
   }
 }
-
-// TODO: Add support to get old tax returns
-// TODO: Add integration tests for this controller
