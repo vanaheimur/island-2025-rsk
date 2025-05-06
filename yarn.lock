@@ -2203,34 +2203,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/core@npm:11.0.1":
-  version: 11.0.1
-  resolution: "@nestjs/core@npm:11.0.1"
-  dependencies:
-    "@nuxt/opencollective": "npm:0.4.1"
-    fast-safe-stringify: "npm:2.1.1"
-    iterare: "npm:1.2.1"
-    path-to-regexp: "npm:8.2.0"
-    tslib: "npm:2.8.1"
-    uid: "npm:2.0.2"
-  peerDependencies:
-    "@nestjs/common": ^11.0.0
-    "@nestjs/microservices": ^11.0.0
-    "@nestjs/platform-express": ^11.0.0
-    "@nestjs/websockets": ^11.0.0
-    reflect-metadata: ^0.1.12 || ^0.2.0
-    rxjs: ^7.1.0
-  peerDependenciesMeta:
-    "@nestjs/microservices":
-      optional: true
-    "@nestjs/platform-express":
-      optional: true
-    "@nestjs/websockets":
-      optional: true
-  checksum: 10c0/a1002f859f021650b774ec2e4869cf77704f994e0df7232af0f73206eac5ebf71f460db4335fb007a5d2eef16a0f5fe76136582186828f5bab09dc10e5270911
-  languageName: node
-  linkType: hard
-
 "@nestjs/core@npm:11.0.11":
   version: 11.0.11
   resolution: "@nestjs/core@npm:11.0.11"
@@ -4334,7 +4306,7 @@ __metadata:
     "@nestjs/apollo": "npm:13.1.0"
     "@nestjs/cli": "npm:11.0.5"
     "@nestjs/common": "npm:11.0.1"
-    "@nestjs/core": "npm:11.0.1"
+    "@nestjs/core": "npm:11.0.11"
     "@nestjs/platform-express": "npm:11.0.1"
     "@nestjs/schematics": "npm:11.0.0"
     "@nestjs/swagger": "npm:11.2.0"
