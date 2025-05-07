@@ -6,10 +6,9 @@ import { TaxReturnOutput } from './dto/taxReturn.output'
 import { UpdateTaxReturnInput } from './dto/updateTaxReturn.input'
 import { TaxReturnsService } from './taxReturns.service'
 import { CurrentUser } from '../auth/decorators/currentUser.decorator'
-import { IsPublic } from '../auth/decorators/isPublic.decorator'
 import type { User } from '../auth/types'
 
-import { Body, Controller, Get, Put, Req } from '@nestjs/common'
+import { Body, Controller, Get, Put } from '@nestjs/common'
 
 @Controller('tax-returns')
 export class TaxReturnsController {
@@ -63,21 +62,15 @@ export class TaxReturnsController {
     })
   }
 
-  @IsPublic()
   @Put()
   async upsertTaxReturn(
-    //@CurrentUser() user: User,
-    @Body() body: UpdateTaxReturnInput, // TODO: Are we missing body parser?
-    @Req() req: Request,
+    @CurrentUser() user: User,
+    @Body() body: UpdateTaxReturnInput,
   ): Promise<string> {
-    console.log('req', req.body)
-    // console.log('user', user)
-    console.log('body', body)
-    return ''
-    // const taxReturn = await this.taxReturnsService.upsertTaxReturn(
-    //   'user.nationalId',
-    //   body,
-    // )
-    // return 'taxReturn'
+    const taxReturn = await this.taxReturnsService.upsertTaxReturn(
+      user.nationalId,
+      body,
+    )
+    return 'taxReturn'
   }
 }

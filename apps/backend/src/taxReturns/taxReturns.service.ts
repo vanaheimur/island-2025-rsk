@@ -2,11 +2,13 @@ import { incomeCategories, InsertTaxReturnData } from './types'
 
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import {
-  and,
+  asset,
   DRIZZLE_CLIENT,
   type DrizzleClient,
   eq,
   income,
+  mortgage,
+  otherDebt,
   taxReturn,
 } from '@repo/drizzle-connection'
 import { type Logger, LOGGER_PROVIDER } from '@repo/logger'
@@ -93,7 +95,7 @@ export class TaxReturnsService {
       throw new NotFoundException('National ID not found')
     }
 
-    await this.db.transaction(async (tx) => {
+    const response = await this.db.transaction(async (tx) => {
       console.log('Running')
 
       // We make sure the tax return exists
@@ -107,33 +109,45 @@ export class TaxReturnsService {
         .onConflictDoNothing()
 
       if (input.incomes) {
-        await tx.delete(income).where(and(eq(income.userId, user.id))) // TODO: Make this work with composite key
+        await tx.delete(income).where(eq(income.userId, user.id)) // TODO: Make this work with composite key
         await tx.insert(income).values(
           input.incomes.map(({ category, ...income }) => ({
             ...income,
             userId: user.id,
-            incomeCategoryId: incomeCategories.indexOf(category), // In a real app we would use a lookup table
+            incomeCategoryId: incomeCategories.indexOf(category) + 1, // In a real app we would use a lookup table
           })),
         )
       }
 
-      // if (input.asset) {
-      //   await tx.delete(asset).where(eq(asset.userId, user.id))
-      //   await tx.insert(asset).values(input.asset)
-      // }
+      if (input.assets) {
+        await tx.delete(asset).where(eq(asset.userId, user.id))
+        await tx
+          .insert(asset)
+          .values(input.assets.map((asset) => ({ ...asset, userId: user.id })))
+      }
 
-      // if (input.mortgage) {
-      //   await tx.delete(mortgage).where(eq(mortgage.userId, user.id))
-      //   await tx.insert(mortgage).values(input.mortgage)
-      // }
+      if (input.mortgages) {
+        await tx.delete(mortgage).where(eq(mortgage.userId, user.id))
+        await tx.insert(mortgage).values(
+          input.mortgages.map((mortgage) => ({
+            ...mortgage,
+            userId: user.id,
+          })),
+        )
+      }
 
-      // if (input.otherDebt) {
-      //   await tx.delete(otherDebt).where(eq(otherDebt.userId, user.id))
-      //   await tx.insert(otherDebt).values(input.otherDebt)
-      // }
+      if (input.otherDebts) {
+        await tx.delete(otherDebt).where(eq(otherDebt.userId, user.id))
+        await tx.insert(otherDebt).values(
+          input.otherDebts.map((otherDebt) => ({
+            ...otherDebt,
+            userId: user.id,
+          })),
+        )
+      }
     })
 
-    console.log('Updated tax return', { nationalId, input })
+    console.log('Updated tax return', { nationalId, input, response })
 
     // We return the first updated element because we can't use limit in postgres
     return 'data[0]'

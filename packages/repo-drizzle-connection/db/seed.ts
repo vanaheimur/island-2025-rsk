@@ -142,6 +142,20 @@ async function main() {
     },
   }))
 
+  // Reset the sequence for all new tables table
+  await db.execute(
+    sql`SELECT setval(pg_get_serial_sequence('"income"', 'id'), coalesce(max(id)+1, 1), false) FROM "income";`,
+  )
+  await db.execute(
+    sql`SELECT setval(pg_get_serial_sequence('"asset"', 'id'), coalesce(max(id)+1, 1), false) FROM "asset";`,
+  )
+  await db.execute(
+    sql`SELECT setval(pg_get_serial_sequence('"mortgage"', 'id'), coalesce(max(id)+1, 1), false) FROM "mortgage";`,
+  )
+  await db.execute(
+    sql`SELECT setval(pg_get_serial_sequence('"other_debt"', 'id'), coalesce(max(id)+1, 1), false) FROM "other_debt";`,
+  )
+
   logger.info('New data created!')
 }
 main()
