@@ -20,7 +20,11 @@
             "secrets": [
                 {
                     "name": "DATABASE_URL",
-                    "valueFrom": "arn:aws:secretsmanager:eu-west-1:296951983367:secret:database_digital_iceland_2025-uTzaor:database_url::"
+                    "valueFrom": "arn:aws:secretsmanager:eu-west-1:296951983367:secret:digital_iceland_2025_rsk-TkV9jg:database_url::"
+                },
+                {
+                    "name": "AUTH_TOKEN_SECRET",
+                    "valueFrom": "arn:aws:secretsmanager:eu-west-1:296951983367:secret:digital_iceland_2025_rsk-TkV9jg:auth_secret::"
                 }
             ],
             "environmentFiles": [],
