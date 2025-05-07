@@ -1,11 +1,12 @@
-import { CreateTaxReturnInput } from './dto/createTaxReturn.input'
-import { UpdateTaxReturnInput } from './dto/updateTaxReturn.input'
+import { incomeCategories, InsertTaxReturnData } from './types'
 
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import {
+  and,
   DRIZZLE_CLIENT,
   type DrizzleClient,
   eq,
+  income,
   taxReturn,
 } from '@repo/drizzle-connection'
 import { type Logger, LOGGER_PROVIDER } from '@repo/logger'
@@ -20,7 +21,11 @@ export class TaxReturnsService {
   public async getSingleTaxReturnByNationalId(nationalId: string) {
     this.logger.debug('Fetching a single tax return', { nationalId })
 
-    // Later we can try add with to select all with the user in one query
+    /**
+     * We fetch the user first since it has data needed to act correctly
+     * such as access control, type or multiple national ids
+     * We would handle things like access control in a guard or some other central manner
+     */
     const user = await this.db.query.user.findFirst({
       where(fields) {
         return eq(fields.nationalId, nationalId)
@@ -70,50 +75,67 @@ export class TaxReturnsService {
     return { ...taxReturn, incomes, assets, mortgages, otherDebts }
   }
 
-  public async updateTaxReturn(id: number, input: UpdateTaxReturnInput) {
-    this.logger.debug('Updating a new tax return', { id, input })
+  public async upsertTaxReturn(nationalId: string, input: InsertTaxReturnData) {
+    this.logger.debug('Updating a new tax return', { nationalId, input })
 
-    const data = await this.db
-      .update(taxReturn)
-      .set(input)
-      .where(eq(taxReturn.id, id))
-      .returning()
+    /**
+     * We fetch the user first since it has data needed to act correctly
+     * such as access control, type or multiple national ids
+     * We would handle things like access control in a guard or some other central manner
+     */
+    const user = await this.db.query.user.findFirst({
+      where(fields) {
+        return eq(fields.nationalId, nationalId)
+      },
+    })
 
-    if (!data || !data[0]) {
-      throw new NotFoundException('Tax return not found')
+    if (!user) {
+      throw new NotFoundException('National ID not found')
     }
 
-    if (data.length !== 1) {
-      this.logger.error(
-        'Multiple tax returns updated when one should be updated',
-        { input },
-      )
-    }
+    await this.db.transaction(async (tx) => {
+      console.log('Running')
+
+      // We make sure the tax return exists
+      await tx
+        .insert(taxReturn)
+        .values({
+          year: new Date().getFullYear(),
+          status: 'in_progress',
+          userId: user.id,
+        })
+        .onConflictDoNothing()
+
+      if (input.incomes) {
+        await tx.delete(income).where(and(eq(income.userId, user.id))) // TODO: Make this work with composite key
+        await tx.insert(income).values(
+          input.incomes.map(({ category, ...income }) => ({
+            ...income,
+            userId: user.id,
+            incomeCategoryId: incomeCategories.indexOf(category), // In a real app we would use a lookup table
+          })),
+        )
+      }
+
+      // if (input.asset) {
+      //   await tx.delete(asset).where(eq(asset.userId, user.id))
+      //   await tx.insert(asset).values(input.asset)
+      // }
+
+      // if (input.mortgage) {
+      //   await tx.delete(mortgage).where(eq(mortgage.userId, user.id))
+      //   await tx.insert(mortgage).values(input.mortgage)
+      // }
+
+      // if (input.otherDebt) {
+      //   await tx.delete(otherDebt).where(eq(otherDebt.userId, user.id))
+      //   await tx.insert(otherDebt).values(input.otherDebt)
+      // }
+    })
+
+    console.log('Updated tax return', { nationalId, input })
 
     // We return the first updated element because we can't use limit in postgres
-    return data[0]
-  }
-
-  public async createTaxReturn(input: CreateTaxReturnInput) {
-    this.logger.debug('Creating a new tax return', { input })
-
-    const data = await this.db
-      .insert(taxReturn)
-      .values({ ...input, year: new Date().getFullYear() })
-      .returning()
-
-    if (!data || !data[0]) {
-      throw new NotFoundException('Tax return not found')
-    }
-
-    if (data.length !== 1) {
-      this.logger.error(
-        'Multiple tax returns created when one should be created',
-        { input },
-      )
-    }
-
-    // We return the first updated element because we can't use limit in postgres
-    return data[0]
+    return 'data[0]'
   }
 }
