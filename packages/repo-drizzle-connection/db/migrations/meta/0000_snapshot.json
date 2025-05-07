@@ -1,5 +1,5 @@
 {
-  "id": "b9591790-bddc-44f6-8065-8f3d8f2e95b4",
+  "id": "19d1a700-5a46-40c6-8305-594ec9d0bc25",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -461,23 +461,6 @@
       "name": "tax_return",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "integer",
-          "primaryKey": true,
-          "notNull": true,
-          "identity": {
-            "type": "always",
-            "name": "tax_return_id_seq",
-            "schema": "public",
-            "increment": "1",
-            "startWith": "1",
-            "minValue": "1",
-            "maxValue": "2147483647",
-            "cache": "1",
-            "cycle": false
-          }
-        },
         "year": {
           "name": "year",
           "type": "integer",
@@ -528,7 +511,15 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
+      "compositePrimaryKeys": {
+        "tax_return_year_userId_pk": {
+          "name": "tax_return_year_userId_pk",
+          "columns": [
+            "year",
+            "userId"
+          ]
+        }
+      },
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},

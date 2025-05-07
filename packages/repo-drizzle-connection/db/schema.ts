@@ -4,6 +4,7 @@ import {
   integer,
   pgEnum,
   pgTable,
+  primaryKey,
   timestamp,
   varchar,
 } from 'drizzle-orm/pg-core'
@@ -14,18 +15,21 @@ export const statusEnum = pgEnum('status', [
   'completed',
 ])
 
-export const taxReturn = pgTable('tax_return', {
-  id: integer().primaryKey().generatedAlwaysAsIdentity(),
-  year: integer().notNull(),
-  status: statusEnum().notNull(),
-  createdAt: timestamp().defaultNow(),
-  updatedAt: timestamp()
-    .defaultNow()
-    .$onUpdate(() => new Date()),
-  userId: integer()
-    .notNull()
-    .references(() => user.id),
-})
+export const taxReturn = pgTable(
+  'tax_return',
+  {
+    year: integer().notNull(),
+    status: statusEnum().notNull(),
+    createdAt: timestamp().defaultNow(),
+    updatedAt: timestamp()
+      .defaultNow()
+      .$onUpdate(() => new Date()),
+    userId: integer()
+      .notNull()
+      .references(() => user.id),
+  },
+  (table) => [primaryKey({ columns: [table.year, table.userId] })],
+)
 
 export const user = pgTable('user', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),

@@ -86,7 +86,12 @@ async function main() {
     },
     taxReturn: {
       columns: {
-        year: f.int({ minValue: 2024, maxValue: 2024 }),
+        userId: f.valuesFromArray({
+          values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        }),
+        year: f.valuesFromArray({
+          values: [2022, 2023, 2024, 1999, 2000, 2001, 2002, 2003, 2004, 2004],
+        }),
       },
     },
     incomeCategory: { count: 0 }, // We already inserted the fixed entries
@@ -136,6 +141,20 @@ async function main() {
       },
     },
   }))
+
+  // Reset the sequence for all new tables table
+  await db.execute(
+    sql`SELECT setval(pg_get_serial_sequence('"income"', 'id'), coalesce(max(id)+1, 1), false) FROM "income";`,
+  )
+  await db.execute(
+    sql`SELECT setval(pg_get_serial_sequence('"asset"', 'id'), coalesce(max(id)+1, 1), false) FROM "asset";`,
+  )
+  await db.execute(
+    sql`SELECT setval(pg_get_serial_sequence('"mortgage"', 'id'), coalesce(max(id)+1, 1), false) FROM "mortgage";`,
+  )
+  await db.execute(
+    sql`SELECT setval(pg_get_serial_sequence('"other_debt"', 'id'), coalesce(max(id)+1, 1), false) FROM "other_debt";`,
+  )
 
   logger.info('New data created!')
 }

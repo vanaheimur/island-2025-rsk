@@ -13,7 +13,6 @@ export class TaxReturnOutput {
   status!: TaxReturnStatus
   createdAt!: Date
   updatedAt!: Date
-  userId!: number
 
   incomes!: IncomeOutput[]
   assets!: AssetOutput[]

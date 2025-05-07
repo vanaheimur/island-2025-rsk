@@ -1,23 +1,26 @@
 import { AssetOutput } from './dto/asset.output'
-import { CreateTaxReturnInput } from './dto/createTaxReturn.input'
 import { IncomeOutput } from './dto/income.output'
 import { MortgageOutput } from './dto/mortgage.output'
 import { OtherDebtOutput } from './dto/otherDebt.output'
 import { TaxReturnOutput } from './dto/taxReturn.output'
 import { UpdateTaxReturnInput } from './dto/updateTaxReturn.input'
 import { TaxReturnsService } from './taxReturns.service'
+import { CurrentUser } from '../auth/decorators/currentUser.decorator'
+import type { User } from '../auth/types'
 
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common'
+import { Body, Controller, Get, Put } from '@nestjs/common'
 
 @Controller('tax-returns')
 export class TaxReturnsController {
   constructor(private readonly taxReturnsService: TaxReturnsService) {}
-  @Get('/:nationalId')
+  @Get()
   async getSingleTaxReturn(
-    @Param('nationalId') nationalId: string,
+    @CurrentUser() user: User,
   ): Promise<TaxReturnOutput> {
     const taxReturn =
-      await this.taxReturnsService.getSingleTaxReturnByNationalId(nationalId)
+      await this.taxReturnsService.getSingleTaxReturnByNationalId(
+        user.nationalId,
+      )
 
     return new TaxReturnOutput({
       ...taxReturn,
@@ -59,30 +62,15 @@ export class TaxReturnsController {
     })
   }
 
-  @Put('/:id')
-  async updateTaxReturn(
-    @Param('id') id: number,
+  @Put()
+  async upsertTaxReturn(
+    @CurrentUser() user: User,
     @Body() body: UpdateTaxReturnInput,
-  ): Promise<TaxReturnOutput> {
-    const taxReturn = await this.taxReturnsService.updateTaxReturn(id, body)
-
-    return new TaxReturnOutput({
-      ...taxReturn,
-      createdAt: taxReturn.createdAt ?? undefined,
-      updatedAt: taxReturn.updatedAt ?? undefined,
-    })
-  }
-
-  @Post()
-  async createTaxReturn(
-    @Body() body: CreateTaxReturnInput,
-  ): Promise<TaxReturnOutput> {
-    const taxReturn = await this.taxReturnsService.createTaxReturn(body)
-
-    return new TaxReturnOutput({
-      ...taxReturn,
-      createdAt: taxReturn.createdAt ?? undefined,
-      updatedAt: taxReturn.updatedAt ?? undefined,
-    })
+  ): Promise<string> {
+    const taxReturn = await this.taxReturnsService.upsertTaxReturn(
+      user.nationalId,
+      body,
+    )
+    return 'taxReturn'
   }
 }

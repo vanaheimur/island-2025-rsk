@@ -1,5 +1,11 @@
-import { CreateTaxReturnInput } from './createTaxReturn.input'
+import { AssetInput } from './asset.input'
+import { IncomeInput } from './income.input'
 
-import { PartialType } from '@nestjs/swagger'
+import { IsOptional } from 'class-validator'
 
-export class UpdateTaxReturnInput extends PartialType(CreateTaxReturnInput) {}
+export class UpdateTaxReturnInput {
+  @IsOptional()
+  incomes?: IncomeInput[]
+  @IsOptional()
+  assets?: AssetInput[]
+}
