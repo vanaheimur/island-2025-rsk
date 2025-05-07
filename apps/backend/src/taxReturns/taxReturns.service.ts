@@ -78,7 +78,10 @@ export class TaxReturnsService {
   }
 
   public async upsertTaxReturn(nationalId: string, input: InsertTaxReturnData) {
-    this.logger.debug('Updating a new tax return', { nationalId, input })
+    // In a real app this would log to a audit log
+    this.logger.debug('Updating a new tax return', {
+      nationalId,
+    })
 
     /**
      * We fetch the user first since it has data needed to act correctly
@@ -95,61 +98,85 @@ export class TaxReturnsService {
       throw new NotFoundException('National ID not found')
     }
 
-    const response = await this.db.transaction(async (tx) => {
-      console.log('Running')
+    let taxReturnResponse: (typeof taxReturn.$inferSelect)[] = []
+    let incomeResponse: (typeof income.$inferSelect)[] = []
+    let assetResponse: (typeof asset.$inferSelect)[] = []
+    let mortgageResponse: (typeof mortgage.$inferSelect)[] = []
+    let otherDebtResponse: (typeof otherDebt.$inferSelect)[] = []
 
+    await this.db.transaction(async (tx) => {
       // We make sure the tax return exists
-      await tx
+      taxReturnResponse = await tx
         .insert(taxReturn)
         .values({
           year: new Date().getFullYear(),
           status: 'in_progress',
           userId: user.id,
         })
-        .onConflictDoNothing()
+        .onConflictDoUpdate({
+          target: [taxReturn.userId, taxReturn.year],
+          set: {
+            status: 'in_progress',
+          },
+        })
+        .returning()
 
       if (input.incomes) {
         await tx.delete(income).where(eq(income.userId, user.id)) // TODO: Make this work with composite key
-        await tx.insert(income).values(
-          input.incomes.map(({ category, ...income }) => ({
-            ...income,
-            userId: user.id,
-            incomeCategoryId: incomeCategories.indexOf(category) + 1, // In a real app we would use a lookup table
-          })),
-        )
+        incomeResponse = await tx
+          .insert(income)
+          .values(
+            input.incomes.map(({ category, ...income }) => ({
+              ...income,
+              userId: user.id,
+              incomeCategoryId: incomeCategories.indexOf(category) + 1, // In a real app we would use a lookup table
+            })),
+          )
+          .returning()
       }
 
       if (input.assets) {
         await tx.delete(asset).where(eq(asset.userId, user.id))
-        await tx
+        assetResponse = await tx
           .insert(asset)
           .values(input.assets.map((asset) => ({ ...asset, userId: user.id })))
+          .returning()
       }
 
       if (input.mortgages) {
         await tx.delete(mortgage).where(eq(mortgage.userId, user.id))
-        await tx.insert(mortgage).values(
-          input.mortgages.map((mortgage) => ({
-            ...mortgage,
-            userId: user.id,
-          })),
-        )
+        mortgageResponse = await tx
+          .insert(mortgage)
+          .values(
+            input.mortgages.map((mortgage) => ({
+              ...mortgage,
+              loanDate: new Date(mortgage.loanDate),
+              userId: user.id,
+            })),
+          )
+          .returning()
       }
 
       if (input.otherDebts) {
         await tx.delete(otherDebt).where(eq(otherDebt.userId, user.id))
-        await tx.insert(otherDebt).values(
-          input.otherDebts.map((otherDebt) => ({
-            ...otherDebt,
-            userId: user.id,
-          })),
-        )
+        otherDebtResponse = await tx
+          .insert(otherDebt)
+          .values(
+            input.otherDebts.map((otherDebt) => ({
+              ...otherDebt,
+              userId: user.id,
+            })),
+          )
+          .returning()
       }
     })
 
-    console.log('Updated tax return', { nationalId, input, response })
-
-    // We return the first updated element because we can't use limit in postgres
-    return 'data[0]'
+    return {
+      ...taxReturnResponse[0],
+      incomes: incomeResponse,
+      assets: assetResponse,
+      mortgages: mortgageResponse,
+      otherDebts: otherDebtResponse,
+    }
   }
 }
