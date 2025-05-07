@@ -27,6 +27,8 @@ export interface InsertTaxReturnData {
     category: IncomeCategory
   })[]
   assets?: Omit<typeof asset.$inferInsert, 'userId'>[]
-  mortgages?: Omit<typeof mortgage.$inferInsert, 'userId'>[]
+  mortgages?: (Omit<typeof mortgage.$inferInsert, 'userId' | 'loanDate'> & {
+    loanDate: string
+  })[]
   otherDebts?: Omit<typeof otherDebt.$inferInsert, 'userId'>[]
 }
