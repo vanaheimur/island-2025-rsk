@@ -1,5 +1,5 @@
 {
-    "family": "digital_iceland_2025",
+    "family": "digital_iceland_2025_rsk",
     "executionRoleArn": "arn:aws:iam::296951983367:role/ecsTaskExecutionRole",
     "networkMode": "awsvpc",
     "containerDefinitions": [
