@@ -1,4 +1,4 @@
-import { asset, income, mortgage, otherDebt } from '@repo/drizzle-connection'
+import { asset, income, mortgage, otherDebt, vehicle } from '@repo/drizzle-connection'
 
 export const taxReturnStatuses = [
   'submitted',
@@ -27,6 +27,7 @@ export interface InsertTaxReturnData {
     category: IncomeCategory
   })[]
   assets?: Omit<typeof asset.$inferInsert, 'userId'>[]
+  vehicles?: Omit<typeof vehicle.$inferInsert, 'userId'>[]
   mortgages?: (Omit<typeof mortgage.$inferInsert, 'userId' | 'loanDate'> & {
     loanDate: string
   })[]

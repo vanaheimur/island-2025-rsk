@@ -4,6 +4,7 @@ import { MortgageOutput } from './dto/mortgage.output'
 import { OtherDebtOutput } from './dto/otherDebt.output'
 import { TaxReturnOutput } from './dto/taxReturn.output'
 import { UpdateTaxReturnInput } from './dto/updateTaxReturn.input'
+import { VehicleOutput } from './dto/vehicle.output'
 import { TaxReturnsService } from './taxReturns.service'
 import { CurrentUser } from '../auth/decorators/currentUser.decorator'
 import type { User } from '../auth/types'
@@ -42,6 +43,14 @@ export class TaxReturnsController {
             ...asset,
             createdAt: asset.createdAt ?? undefined,
             updatedAt: asset.updatedAt ?? undefined,
+          }),
+      ),
+      vehicles: taxReturn.vehicles.map(
+        (vehicle) =>
+          new VehicleOutput({
+            ...vehicle,
+            createdAt: vehicle.createdAt ?? undefined,
+            updatedAt: vehicle.updatedAt ?? undefined,
           }),
       ),
       mortgages: taxReturn.mortgages.map(
@@ -93,6 +102,14 @@ export class TaxReturnsController {
             ...asset,
             createdAt: asset.createdAt ?? undefined,
             updatedAt: asset.updatedAt ?? undefined,
+          }),
+      ),
+      vehicles: taxReturn.vehicles.map(
+        (vehicle) =>
+          new VehicleOutput({
+            ...vehicle,
+            createdAt: vehicle.createdAt ?? undefined,
+            updatedAt: vehicle.updatedAt ?? undefined,
           }),
       ),
       mortgages: taxReturn.mortgages.map(

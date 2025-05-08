@@ -1,0 +1,1 @@
+ALTER TABLE "other_debt" ALTER COLUMN "description" DROP DEFAULT;

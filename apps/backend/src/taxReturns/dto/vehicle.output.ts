@@ -1,14 +1,14 @@
-export class OtherDebtOutput {
+export class VehicleOutput {
   id!: number
-  description!: string
-  interestExpenses!: number
-  remainingDebt!: number
+  licensePlate!: string
+  yearOfPurchase!: number
+  value!: number
   createdAt!: Date
   updatedAt!: Date
   userId!: number
 
   // this allows us to cast data to an instance of this class
-  constructor(partial: Partial<OtherDebtOutput>) {
+  constructor(partial: Partial<VehicleOutput>) {
     Object.assign(this, partial)
   }
 }

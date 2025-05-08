@@ -26,7 +26,9 @@ async function main() {
       { name: 'Dagpeningar', order: 3 },
       { name: 'Bifreiðahlunnindi', order: 4 },
       { name: 'Húsnæðishlunnindi', order: 5 },
-      { name: 'Önnur hlunnindi, hvað', order: 6 },
+      { name: 'Íþróttastyrkur', order: 6 },
+      { name: 'Starfsmennastyrkur', order: 7 },
+      { name: 'Önnur hlunnindi, hvað', order: 8 },
     ])
     .returning()
     .execute()
@@ -105,9 +107,14 @@ async function main() {
     asset: {
       columns: {
         landNumber: f.phoneNumber({ template: '###-####' }),
-        description: f.streetAddress(), // TODO: Use icelandic address (nice to have)
-        amount: f.int({ minValue: 40_000_000, maxValue: 95_000_000 }),
-        isForeign: f.valuesFromArray({ values: [false] }), // Only false for now, future expansion
+        yearOfPurchase: f.year(),
+        value: f.int({ minValue: 40_000_000, maxValue: 95_000_000 }),
+      },
+    },
+    vehicle: {
+      columns: {
+        licensePlate: f.phoneNumber({ template: '###-###' }),
+        amount: f.int({ minValue: 1_000_000, maxValue: 10_000_000 }),
       },
     },
     mortgage: {
@@ -148,6 +155,9 @@ async function main() {
   )
   await db.execute(
     sql`SELECT setval(pg_get_serial_sequence('"asset"', 'id'), coalesce(max(id)+1, 1), false) FROM "asset";`,
+  )
+  await db.execute(
+    sql`SELECT setval(pg_get_serial_sequence('"vehicle"', 'id'), coalesce(max(id)+1, 1), false) FROM "vehicle";`,
   )
   await db.execute(
     sql`SELECT setval(pg_get_serial_sequence('"mortgage"', 'id'), coalesce(max(id)+1, 1), false) FROM "mortgage";`,

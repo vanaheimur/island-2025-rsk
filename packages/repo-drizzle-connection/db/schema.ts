@@ -86,6 +86,20 @@ export const asset = pgTable('asset', {
     .references(() => user.id),
 })
 
+export const vehicle = pgTable('vehicle', {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  licensePlate: varchar({ length: 255 }).notNull(),
+  yearOfPurchase: integer().notNull(),
+  value: decimal({ scale: 30, mode: 'number' }).notNull(),
+  createdAt: timestamp().defaultNow(),
+  updatedAt: timestamp()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+  userId: integer()
+    .notNull()
+    .references(() => user.id),
+})
+
 export const mortgage = pgTable('mortgage', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   yearOfPurchase: integer().notNull(),
@@ -110,6 +124,7 @@ export const mortgage = pgTable('mortgage', {
 
 export const otherDebt = pgTable('other_debt', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  description: varchar({ length: 255 }).notNull(),
   interestExpenses: decimal({ scale: 30, mode: 'number' }).notNull(),
   remainingDebt: decimal({ scale: 30, mode: 'number' }).notNull(),
   createdAt: timestamp().defaultNow(),

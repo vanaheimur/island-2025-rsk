@@ -8,6 +8,20 @@
       "when": 1746619809560,
       "tag": "0000_damp_mattie_franklin",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1746670156273,
+      "tag": "0001_curly_hannibal_king",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1746670184406,
+      "tag": "0002_swift_roland_deschain",
+      "breakpoints": true
     }
   ]
 }

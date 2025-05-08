@@ -2,6 +2,7 @@ import { AssetOutput } from './asset.output'
 import { IncomeOutput } from './income.output'
 import { MortgageOutput } from './mortgage.output'
 import { OtherDebtOutput } from './otherDebt.output'
+import { VehicleOutput } from './vehicle.output'
 import { type TaxReturnStatus, taxReturnStatuses } from '../types'
 
 import { ApiProperty } from '@nestjs/swagger'
@@ -16,6 +17,7 @@ export class TaxReturnOutput {
 
   incomes!: IncomeOutput[]
   assets!: AssetOutput[]
+  vehicles!: VehicleOutput[]
   mortgages!: MortgageOutput[]
   otherDebts!: OtherDebtOutput[]
 

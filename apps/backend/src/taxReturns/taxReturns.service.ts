@@ -10,6 +10,7 @@ import {
   mortgage,
   otherDebt,
   taxReturn,
+  vehicle,
 } from '@repo/drizzle-connection'
 import { type Logger, LOGGER_PROVIDER } from '@repo/logger'
 
@@ -48,15 +49,19 @@ export class TaxReturnsService {
       throw new NotFoundException('Tax return not found')
     }
 
-    // TODO: Sort by incomeCategoryId or group by it
     const incomes = await this.db.query.income.findMany({
       where(fields) {
         return eq(fields.userId, user.id)
       },
     })
 
-    // TODO: Filter by isForeign === false
     const assets = await this.db.query.asset.findMany({
+      where(fields) {
+        return eq(fields.userId, user.id)
+      },
+    })
+
+    const vehicles = await this.db.query.vehicle.findMany({
       where(fields) {
         return eq(fields.userId, user.id)
       },
@@ -74,7 +79,7 @@ export class TaxReturnsService {
       },
     })
 
-    return { ...taxReturn, incomes, assets, mortgages, otherDebts }
+    return { ...taxReturn, incomes, assets, vehicles, mortgages, otherDebts }
   }
 
   public async upsertTaxReturn(nationalId: string, input: InsertTaxReturnData) {
@@ -101,6 +106,7 @@ export class TaxReturnsService {
     let taxReturnResponse: (typeof taxReturn.$inferSelect)[] = []
     let incomeResponse: (typeof income.$inferSelect)[] = []
     let assetResponse: (typeof asset.$inferSelect)[] = []
+    let vehicleResponse: (typeof vehicle.$inferSelect)[] = []
     let mortgageResponse: (typeof mortgage.$inferSelect)[] = []
     let otherDebtResponse: (typeof otherDebt.$inferSelect)[] = []
 
@@ -143,6 +149,16 @@ export class TaxReturnsService {
           .returning()
       }
 
+      if (input.vehicles) {
+        await tx.delete(vehicle).where(eq(vehicle.userId, user.id))
+        vehicleResponse = await tx
+          .insert(vehicle)
+          .values(
+            input.vehicles.map((vehicle) => ({ ...vehicle, userId: user.id })),
+          )
+          .returning()
+      }
+
       if (input.mortgages) {
         await tx.delete(mortgage).where(eq(mortgage.userId, user.id))
         mortgageResponse = await tx
@@ -175,6 +191,7 @@ export class TaxReturnsService {
       ...taxReturnResponse[0],
       incomes: incomeResponse,
       assets: assetResponse,
+      vehicles: vehicleResponse,
       mortgages: mortgageResponse,
       otherDebts: otherDebtResponse,
     }
