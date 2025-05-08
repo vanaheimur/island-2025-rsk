@@ -1,6 +1,12 @@
 import 'dotenv/config'
 
 import * as schema from './schema'
+import {
+  getLicensePlates,
+  getNationalIds,
+  incomeDescriptions,
+  otherDebtDescriptions,
+} from './utilitiesAndData'
 
 import { logger } from '@repo/logger'
 import { sql } from 'drizzle-orm'
@@ -35,18 +41,8 @@ async function main() {
 
   const incomeCategoryIds = incomeCategories.map(({ id }) => id)
 
-  const nationalIds = [
-    '1811921519',
-    '1811931589',
-    '1902961489',
-    '1906621449',
-    '1906651439',
-    '1908811569',
-    '1908821449',
-    '1908821529',
-    '1907611429',
-    ...(process.env.TEST_NATIONAL_IDS?.split(',') ?? []),
-  ]
+  const nationalIds = getNationalIds()
+  const licensePlates = getLicensePlates(100)
 
   const lendersNames = [
     'Almenni',
@@ -67,7 +63,7 @@ async function main() {
   ]
 
   // TODO: Add company national ids array later, using nationalIds for now
-  const lendersNationalIds = nationalIds
+  const lendersNationalIds = nationalIds;
 
   const loanNumbers: string[] = []
   for (let i = 0; i < 100; i++) {
@@ -87,10 +83,8 @@ async function main() {
       },
     },
     taxReturn: {
+      count: 5,
       columns: {
-        userId: f.valuesFromArray({
-          values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-        }),
         year: f.valuesFromArray({
           values: [2022, 2023, 2024, 1999, 2000, 2001, 2002, 2003, 2004, 2004],
         }),
@@ -98,28 +92,33 @@ async function main() {
     },
     incomeCategory: { count: 0 }, // We already inserted the fixed entries
     income: {
+      count: 20,
       columns: {
-        description: f.loremIpsum(), // TODO: Use icelandic companies names (nice to have)
+        description: f.valuesFromArray({ values: incomeDescriptions }),
         amount: f.int({ minValue: 6_000_000, maxValue: 15_000_000 }),
         incomeCategoryId: f.valuesFromArray({ values: incomeCategoryIds }),
       },
     },
     asset: {
+      count: 20,
       columns: {
-        landNumber: f.phoneNumber({ template: '###-####' }),
-        yearOfPurchase: f.year(),
-        value: f.int({ minValue: 40_000_000, maxValue: 95_000_000 }),
+        landNumber: f.phoneNumber({ template: '6##-####' }),
+        yearOfPurchase: f.int({ minValue: 1995, maxValue: 2025 }),
+        amount: f.int({ minValue: 40_000_000, maxValue: 95_000_000 }),
       },
     },
     vehicle: {
+      count: 20,
       columns: {
-        licensePlate: f.phoneNumber({ template: '###-###' }),
-        amount: f.int({ minValue: 1_000_000, maxValue: 10_000_000 }),
+        licensePlate: f.valuesFromArray({ values: licensePlates }),
+        yearOfPurchase: f.int({ minValue: 1995, maxValue: 2025 }),
+        value: f.int({ minValue: 100_000, maxValue: 8_000_000 }),
       },
     },
     mortgage: {
+      count: 20,
       columns: {
-        yearOfPurchase: f.year(),
+        yearOfPurchase: f.int({ minValue: 1995, maxValue: 2025 }),
         residentialLocation: f.streetAddress(), // TODO: Use icelandic address (nice to have)
         lenderName: f.valuesFromArray({ values: lendersNames }),
         lenderNationalId: f.valuesFromArray({ values: lendersNationalIds }),
@@ -142,7 +141,9 @@ async function main() {
       },
     },
     otherDebt: {
+      count: 30,
       columns: {
+        description: f.valuesFromArray({ values: otherDebtDescriptions }),
         interestExpenses: f.int({ minValue: 0, maxValue: 100000 }),
         remainingDebt: f.int({ minValue: 0, maxValue: 5000000 }),
       },
