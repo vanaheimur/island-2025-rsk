@@ -129,61 +129,81 @@ export class TaxReturnsService {
 
       if (input.incomes) {
         await tx.delete(income).where(eq(income.userId, user.id)) // TODO: Make this work with composite key
-        incomeResponse = await tx
-          .insert(income)
-          .values(
-            input.incomes.map(({ category, ...income }) => ({
-              ...income,
-              userId: user.id,
-              incomeCategoryId: incomeCategories.indexOf(category) + 1, // In a real app we would use a lookup table
-            })),
-          )
-          .returning()
+
+        if (input.incomes.length > 0) {
+          incomeResponse = await tx
+            .insert(income)
+            .values(
+              input.incomes.map(({ category, ...income }) => ({
+                ...income,
+                userId: user.id,
+                incomeCategoryId: incomeCategories.indexOf(category) + 1, // In a real app we would use a lookup table
+              })),
+            )
+            .returning()
+        }
       }
 
       if (input.assets) {
         await tx.delete(asset).where(eq(asset.userId, user.id))
-        assetResponse = await tx
-          .insert(asset)
-          .values(input.assets.map((asset) => ({ ...asset, userId: user.id })))
-          .returning()
+
+        if (input.assets.length > 0) {
+          assetResponse = await tx
+            .insert(asset)
+            .values(
+              input.assets.map((asset) => ({ ...asset, userId: user.id })),
+            )
+            .returning()
+        }
       }
 
       if (input.vehicles) {
         await tx.delete(vehicle).where(eq(vehicle.userId, user.id))
-        vehicleResponse = await tx
-          .insert(vehicle)
-          .values(
-            input.vehicles.map((vehicle) => ({ ...vehicle, userId: user.id })),
-          )
-          .returning()
+
+        if (input.vehicles.length > 0) {
+          vehicleResponse = await tx
+            .insert(vehicle)
+            .values(
+              input.vehicles.map((vehicle) => ({
+                ...vehicle,
+                userId: user.id,
+              })),
+            )
+            .returning()
+        }
       }
 
       if (input.mortgages) {
         await tx.delete(mortgage).where(eq(mortgage.userId, user.id))
-        mortgageResponse = await tx
-          .insert(mortgage)
-          .values(
-            input.mortgages.map((mortgage) => ({
-              ...mortgage,
-              loanDate: new Date(mortgage.loanDate),
-              userId: user.id,
-            })),
-          )
-          .returning()
+
+        if (input.mortgages.length > 0) {
+          mortgageResponse = await tx
+            .insert(mortgage)
+            .values(
+              input.mortgages.map((mortgage) => ({
+                ...mortgage,
+                loanDate: new Date(mortgage.loanDate),
+                userId: user.id,
+              })),
+            )
+            .returning()
+        }
       }
 
       if (input.otherDebts) {
         await tx.delete(otherDebt).where(eq(otherDebt.userId, user.id))
-        otherDebtResponse = await tx
-          .insert(otherDebt)
-          .values(
-            input.otherDebts.map((otherDebt) => ({
-              ...otherDebt,
-              userId: user.id,
-            })),
-          )
-          .returning()
+
+        if (input.otherDebts.length > 0) {
+          otherDebtResponse = await tx
+            .insert(otherDebt)
+            .values(
+              input.otherDebts.map((otherDebt) => ({
+                ...otherDebt,
+                userId: user.id,
+              })),
+            )
+            .returning()
+        }
       }
     })
 

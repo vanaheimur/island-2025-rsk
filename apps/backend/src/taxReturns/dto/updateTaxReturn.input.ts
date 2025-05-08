@@ -12,11 +12,9 @@ export class UpdateTaxReturnInput {
   @IsOptional()
   assets?: AssetInput[]
   @IsOptional()
-  vehicle?: VehicleInput[]
+  vehicles?: VehicleInput[]
   @IsOptional()
   mortgages?: MortgageInput[]
   @IsOptional()
   otherDebts?: OtherDebtInput[]
-  @IsOptional()
-  value?: number
 }
